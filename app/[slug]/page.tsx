@@ -1,24 +1,21 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { urls } from "@/environment/route_urls";
 
 export default function RedirectPage({ params }: { params: { slug: string } }) {
-  const router      =   useRouter();
-  const { slug }    =   params;
+  const router = useRouter();
+  const { slug } = params;
 
   useEffect(() => {
     async function fetchAndRedirect() {
       try {
-        const res = await fetch(urls.redirect_url+slug);
+        const res = await fetch(`http://localhost:5000/redirect-url/${slug}`);
         if (!res.ok) throw new Error("URL not found");
 
         const { link } = await res.json();
-        window.location.href = link; // Client-side redirect
-        
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        router.replace(link); // Redirect to the original URL
       } catch (error) {
-        router.push("/404");
+        console.error("Error fetching URL:", error);
       }
     }
 
