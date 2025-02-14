@@ -2,7 +2,11 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-export default function RedirectPage({ params }: { params: { slug: string } }) {
+interface PageProps {
+  params: { slug: string };
+}
+
+export default function RedirectPage({ params }: PageProps) {
   const router = useRouter();
   const { slug } = params;
 
