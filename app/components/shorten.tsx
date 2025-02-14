@@ -11,6 +11,7 @@ const inter                               =     Inter({ subsets: ["latin"] });
 
 
 const ShortenSection = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [link, setLinkList] = useRecoilState(Links);
   const [inputValue, setInputValue] = useState("");
 
@@ -18,8 +19,8 @@ const ShortenSection = () => {
     try {
       new URL(value)
       return true;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
-      console.log(e.message);
       return false;
     }
   }

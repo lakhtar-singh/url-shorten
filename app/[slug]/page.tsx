@@ -16,6 +16,7 @@ export default function RedirectPage({ params }: { params: { slug: string } }) {
         const { link } = await res.json();
         window.location.href = link; // Client-side redirect
         
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         router.push("/404");
       }
