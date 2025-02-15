@@ -1,30 +1,23 @@
-"use client";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+
+import { urls } from "@/environment/route_urls";
+import { redirect } from "next/navigation";
 
 interface PageProps {
-  params: { slug: string };
+  params?: { slug?: string }; // Make `params` optional to prevent errors
 }
 
-export default function RedirectPage({ params }: PageProps) {
-  const router = useRouter();
-  const { slug } = params;
+export default async function RedirectPage({ params }: PageProps) {
+  const slug    =   await params?.slug;
+      
+  const res = await fetch(urls.redirect_url+slug, {
+      cache: "no-store", // Prevents caching issues
+  });
+    if (!res.ok) throw new Error("URL not found");
 
-  useEffect(() => {
-    async function fetchAndRedirect() {
-      try {
-        const res = await fetch(`http://localhost:5000/redirect-url/${slug}`);
-        if (!res.ok) throw new Error("URL not found");
-
-        const { link } = await res.json();
-        router.replace(link); // Redirect to the original URL
-      } catch (error) {
-        console.error("Error fetching URL:", error);
-      }
+    const { link } = await res.json();
+    if(link){
+      redirect(link);
     }
 
-    fetchAndRedirect();
-  }, [slug, router]);
-
-  return <p>Redirecting...</p>;
+  return <p>Invalid URL</p>;
 }
