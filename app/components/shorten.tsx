@@ -1,72 +1,69 @@
 "use client";
-import React, { useState }                from  "react";
-import { Inter }                          from  "next/font/google";
-import { useRecoilState }                 from  "recoil";
-import { Links }                          from  "@/atoms/store";
-import axios                              from  "axios";
-import {urls}                             from  "@/environment/route_urls";
-import {toastSuccess, toastError}         from  "@/util/helper";
-const inter                               =     Inter({ subsets: ["latin"] });
 
+import React, { useState } from "react";
+import { Inter } from "next/font/google";
+import {  useDispatch } from "react-redux";
+import { addLink } from "@/redux/slices/linkSlice";
+import axios from "axios";
+import { urls } from "@/environment/route_urls";
+import { toastSuccess, toastError } from "@/util/helper";
 
+const inter = Inter({ subsets: ["latin"] });
 
 const ShortenSection = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [link, setLinkList] = useRecoilState(Links);
+  const dispatch = useDispatch();
+
   const [inputValue, setInputValue] = useState("");
 
-  const isUrl = (value:string) => {
+  const isUrl = (value: string) => {
     try {
-      new URL(value)
+      new URL(value);
       return true;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       return false;
     }
-  }
-  
-  const shorten = async() => {
+  };
 
-    //Check if that is actuall value
+  const shorten = async () => {
     if (!inputValue.trim()) return;
 
-    //Check if the entered value is URL or not.
-    if(!isUrl(inputValue)){
-      alert('Enter Valid URL');
-      return
-    } 
+    if (!isUrl(inputValue)) {
+      alert("Enter a valid URL");
+      return;
+    }
 
-    const data = {
-      url : inputValue
-    }
-    const response = await axios.post(urls.shorten_url, data);
-    
-    if(response.data.status == 200){
-      const structure = {
-        short_link: response.data.short_link,
-        original_link: inputValue,
-        click: 0,
-        status: "Active",
-        date: new Date().toISOString().split("T")[0],
-      };
-      
-      setLinkList((prevLinks) => [...prevLinks, structure]);
-      setInputValue(""); // Clear input field after shortening
-      toastSuccess("🚀 Success! Your URL has been shortened!");
-    }
-    else{
-      toastError("🚀 Error! "+response?.data?.message);
+    const data = { url: inputValue };
+
+    try {
+      const response = await axios.post(urls.shorten_url, data);
+
+      if (response.data.status === 200) {
+        const structure = {
+          short_link: response.data.short_link,
+          original_link: inputValue,
+          click: 0,
+          status: "Active",
+          date: new Date().toISOString().split("T")[0],
+        };
+
+        dispatch(addLink(structure)); // ✅ Use Redux instead of setLinkList
+        setInputValue(""); // Clear input field after shortening
+        toastSuccess("🚀 Success! Your URL has been shortened!");
+      } else {
+        toastError("🚀 Error! " + response?.data?.message);
+      }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      toastError("🚀 Error! Something went wrong.");
     }
   };
 
   const triggerEvent = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    
-    if(e.key == 'Enter'){
+    if (e.key === "Enter") {
       shorten();
-      setInputValue("");
     }
-  }
-
+  };
 
   return (
     <div className="special-bg">
@@ -85,7 +82,7 @@ const ShortenSection = () => {
                 className={`w-full border rounded-6xl p-4 border-gray-300 ${inter.className}`}
                 placeholder="Enter the link here"
                 value={inputValue}
-                onChange={(e) => {setInputValue(e.target.value)}}
+                onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={triggerEvent}
               />
               <div className="absolute top-1/2 -translate-y-1/2 right-1">
@@ -94,11 +91,11 @@ const ShortenSection = () => {
                 </button>
               </div>
             </div>
+            
           </div>
         </div>
       </div>
     </div>
-    
   );
 };
 

@@ -31,7 +31,7 @@ router.post('/shorten-link', async (req, res) => {
     return
 });
 
-router.get('/redirect-url/:id', async(req, res) => {
+router.get('/url/:id', async(req, res) => {
     const result    =   await Link.find({short_link:req.params.id});
     if(result[0]){
         let click      =   result[0].click;
@@ -39,7 +39,8 @@ router.get('/redirect-url/:id', async(req, res) => {
         await Link.updateOne({short_link:short_link},{click:(click+1)});
     }
 
-    res.json({id:req.params.id, link:result[0]?.original_link});
+    res.redirect(result[0]?.original_link);
+    return
 });
 
 router.get('/default-list', async(req, res) => {
