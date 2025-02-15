@@ -1,5 +1,5 @@
 export const env = {
-    'API_URL' : 'http://localhost:5000',
-    'SITE_URL' : 'http://localhost:3000'
+    'API_URL' : 'https://url-shorten-7mo8.onrender.com',
+    'SITE_URL' : 'https://url-shorten-git-main-lakhtar-singhs-projects.vercel.app/'
 }
 
