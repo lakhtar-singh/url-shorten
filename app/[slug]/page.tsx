@@ -2,13 +2,10 @@
 import { urls } from "@/environment/route_urls";
 import { redirect } from "next/navigation";
 
-interface PageProps {
-  params: { slug: string }; // Make `params` optional to prevent errors
-}
 
-export default async function RedirectPage({ params }: PageProps) {
-  const {slug}    =   params;
-      
+export default async function RedirectPage({ params }: { params: { slug: string } }) {
+  const slug = params.slug; // Ensure params is handled synchronously
+   
   const res = await fetch(urls.redirect_url+slug, {
       cache: "no-store", // Prevents caching issues
   });
